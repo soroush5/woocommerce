@@ -905,14 +905,14 @@ class WC_Form_Handler {
 			 */
 			$valid_statuses   = apply_filters( 'woocommerce_valid_order_statuses_for_cancel', array( OrderStatus::PENDING, OrderStatus::FAILED ), $order );
 			$user_can_cancel  = current_user_can( 'cancel_order', $order_id );
-			$order_can_cancel = $order->has_status( $valid_statuses );
+			$order_can_cancel = $order && $order->has_status( $valid_statuses );
 			$redirect         = isset( $_GET['redirect'] ) ? wp_unslash( $_GET['redirect'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( WC()->session instanceof WC_Session_Handler && ! WC()->session->has_session() ) {
 				WC()->session->set_customer_session_cookie( true );
 			}
 
-			if ( $user_can_cancel && $order_can_cancel && $order->get_id() === $order_id && hash_equals( $order->get_order_key(), $order_key ) ) {
+			if ( $order && $user_can_cancel && $order_can_cancel && $order->get_id() === $order_id && hash_equals( $order->get_order_key(), $order_key ) ) {
 
 				// Cancel the order + restore stock.
 				WC()->session->set( 'order_awaiting_payment', false );
@@ -922,6 +922,8 @@ class WC_Form_Handler {
 
 				do_action( 'woocommerce_cancelled_order', $order->get_id() );
 
+			} elseif ( ! $order ) {
+				wc_add_notice( __( 'Invalid order.', 'woocommerce' ), 'error' );
 			} elseif ( $user_can_cancel && ! $order_can_cancel ) {
 				wc_add_notice( __( 'Your order can no longer be cancelled. Please contact us if you need assistance.', 'woocommerce' ), 'error' );
 			} else {

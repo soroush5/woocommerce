@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Show the "Invalid order." notice instead of raising a PHP error when cancelling an order that no longer exists.
