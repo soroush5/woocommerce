@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Prevent a fatal error on the PayPal Buttons create-order endpoint when order_key is not a string. A non-string key is now treated as absent so the request falls through to the existing invalid-order handling.

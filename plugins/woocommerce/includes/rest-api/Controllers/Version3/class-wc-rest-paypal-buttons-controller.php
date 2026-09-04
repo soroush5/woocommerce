@@ -127,7 +127,7 @@ class WC_REST_Paypal_Buttons_Controller extends WC_REST_Controller {
 			return new WP_REST_Response( array( 'error' => 'Order not found' ), 404 );
 		}
 
-		$order_key = $data['order_key'];
+		$order_key = is_string( $data['order_key'] ) ? $data['order_key'] : '';
 		if ( ! $order_key || ! hash_equals( $order->get_order_key(), $order_key ) ) {
 			return new WP_REST_Response( array( 'error' => 'Order not found' ), 404 );
 		}
